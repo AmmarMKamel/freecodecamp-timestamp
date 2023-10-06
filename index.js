@@ -18,18 +18,35 @@ app.get("/", function (req, res) {
 	res.sendFile(__dirname + "/views/index.html");
 });
 
+/**
+ * Route handler for the "/api/:date" endpoint.
+ * Returns a JSON object with the Unix timestamp and UTC formatted date of
+ * either the specified date parameter or the current time if no parameter
+ * is passed.
+ *
+ * @route GET /api/:date
+ * @param {string} req.params.date - The date string (ISO format) or timestamp (Unix)
+ * @returns {Object} 200 - An object with the Unix timestamp and UTC string
+ */
 app.get("/api/:date", (req, res) => {
+	// Declare date variable
 	let date;
 
+	// Check if req.params.date is NaN
 	if (isNaN(req.params.date)) {
+		// If true, create new date object from req.params.date
 		date = new Date(req.params.date);
 	} else {
+		// If false, req.params.date is a Unix timestamp and should be converted to a number
 		date = new Date(Number(req.params.date));
 	}
 
+	// Extract Unix timestamp from date object
 	const unixTimestamp = date.getTime();
+	// Format date object to UTC string
 	const utcFormattedDate = date.toUTCString();
 
+	// Send response with 200 status and JSON object containing Unix timestamp and UTC string
 	res.status(200).json({ unix: unixTimestamp, utc: utcFormattedDate });
 });
 
