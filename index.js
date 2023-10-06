@@ -36,6 +36,7 @@ app.get("/api/:date", (req, res) => {
 	if (isNaN(req.params.date)) {
 		// If true, create new date object from req.params.date
 		date = new Date(req.params.date);
+		if (!date.getTime()) res.json({ error: "Invalid Date" });
 	} else {
 		// If false, req.params.date is a Unix timestamp and should be converted to a number
 		date = new Date(Number(req.params.date));
