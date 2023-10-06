@@ -28,15 +28,23 @@ app.get("/", function (req, res) {
  * @param {string} req.params.date - The date string (ISO format) or timestamp (Unix)
  * @returns {Object} 200 - An object with the Unix timestamp and UTC string
  */
-app.get("/api/:date", (req, res) => {
+app.get("/api/:date?", (req, res) => {
 	// Declare date variable
 	let date;
+
+	if (!req.params.date) {
+		return res.status(200).json({
+			unix: new Date().getTime(),
+			utc: new Date().toUTCString(),
+		});
+	}
 
 	// Check if req.params.date is NaN
 	if (isNaN(req.params.date)) {
 		// If true, create new date object from req.params.date
 		date = new Date(req.params.date);
-		if (!date.getTime()) res.json({ error: "Invalid Date" });
+		if (!date.getTime())
+			return res.status(400).json({ error: "Invalid Date" });
 	} else {
 		// If false, req.params.date is a Unix timestamp and should be converted to a number
 		date = new Date(Number(req.params.date));
