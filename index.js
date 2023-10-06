@@ -19,19 +19,20 @@ app.get("/", function (req, res) {
 });
 
 /**
- * Route handler for the "/api/:date" endpoint.
- * Returns a JSON object with the Unix timestamp and UTC formatted date of
- * either the specified date parameter or the current time if no parameter
- * is passed.
+ * This function handles requests to the "/api/:date" endpoint.
+ * It provides a JSON object that includes the Unix timestamp and
+ * correctly formatted date in UTC. This date is either defined by the
+ * date parameter, or is automatically set to the current time if not provided.
  *
  * @route GET /api/:date
- * @param {string} req.params.date - The date string (ISO format) or timestamp (Unix)
- * @returns {Object} 200 - An object with the Unix timestamp and UTC string
+ * @param {string} req.params.date - Represents the date. Should be in either ISO format or Unix timestamp.
+ * @returns {Object} 200 - Returns an object that consists of the Unix timestamp and UTC date string.
  */
 app.get("/api/:date?", (req, res) => {
-	// Declare date variable
+	// Date variable declaration
 	let date;
 
+	// If no date is received, send current time
 	if (!req.params.date) {
 		return res.status(200).json({
 			unix: new Date().getTime(),
@@ -39,23 +40,24 @@ app.get("/api/:date?", (req, res) => {
 		});
 	}
 
-	// Check if req.params.date is NaN
+	// Verifies if req.params.date is NaN
 	if (isNaN(req.params.date)) {
-		// If true, create new date object from req.params.date
+		// On being true, a new Date object is acquired from req.params.date
 		date = new Date(req.params.date);
 		if (!date.getTime())
+			// If invalid, return error
 			return res.status(400).json({ error: "Invalid Date" });
 	} else {
-		// If false, req.params.date is a Unix timestamp and should be converted to a number
+		// If not true, req.params.date is considered as a Unix timestamp and is converted to a number
 		date = new Date(Number(req.params.date));
 	}
 
-	// Extract Unix timestamp from date object
+	// Getting Unix timestamp from the date object
 	const unixTimestamp = date.getTime();
-	// Format date object to UTC string
+	// Formating the date object into a UTC string
 	const utcFormattedDate = date.toUTCString();
 
-	// Send response with 200 status and JSON object containing Unix timestamp and UTC string
+	// Response is sent with status 200 and a JSON object that contains the Unix timestamp and UTC string.
 	res.status(200).json({ unix: unixTimestamp, utc: utcFormattedDate });
 });
 
